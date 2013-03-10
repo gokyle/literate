@@ -24,8 +24,8 @@ func PdfWriter(markdown, filename string) (err error) {
 		return
 	}
 
-	outName := "-o " + filename + ".pdf"
-	pandoc := exec.Command("pandoc", outName, tmp.Name())
+	outName := filename + ".pdf"
+	pandoc := exec.Command("pandoc", "-o", outName, tmp.Name())
 	err = pandoc.Run()
 	return
 }
