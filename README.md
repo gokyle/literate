@@ -12,6 +12,32 @@ example, producing listings for `listing.go`:
 * HTML -> `listing.go.html`
 * PDF -> `listing.go.pdf`
 
+### Examples
+
+* To produce an HTML listing for `listing.go`:
+
+        golst -o html listing.go
+
+  This will produce `listing.go.html`, which is a standalone page. The
+  template for this page is contained in the `html.go` source file, and
+  is taken from one of my sites (http://tyrfingr.is).
+
+* To produce a PDF listing for `pandoc.go`:
+
+        golst -o pdf pandoc.go
+
+  Similar to the previous example, this will produce the PDF file
+  `pandoc.go.pdf`.
+
+* To produce a markdown listing for `html.go` and have this printed
+  to standard output:
+
+        golst html.go
+
+  Or, alternatively,
+
+        golst -o - html.go
+
 ### Dependencies
 
 * `golst` uses [`blackfriday`](https://github.com/russross/blackfriday)
