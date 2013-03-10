@@ -8,7 +8,9 @@ import (
 	"os/exec"
 )
 
-// PdfWriter transforms the listing to a PDF.
+// PdfWriter transforms the listing to a PDF. First, the markdown is
+// written to a temporary file (which is removed when the function
+// returns); this temporary file is then passed to pandoc for conversion.
 func PdfWriter(markdown, filename string) (err error) {
 	tmp, err := ioutil.TempFile("", "golst_pandoc")
 	if err != nil {
@@ -16,12 +18,13 @@ func PdfWriter(markdown, filename string) (err error) {
 	}
 	defer tmp.Close()
 	defer os.Remove(tmp.Name())
+
 	_, err = tmp.Write([]byte(markdown))
 	if err != nil {
 		return
 	}
 
-        outName := "-o " + filename + ".pdf"
+	outName := "-o " + filename + ".pdf"
 	pandoc := exec.Command("pandoc", outName, tmp.Name())
 	err = pandoc.Run()
 	return
