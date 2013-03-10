@@ -118,6 +118,7 @@ func main() {
                         *fOutputFormat)
                 fmt.Println("Supported formats:")
                 fmt.Println("\t-        write markdown to standard output")
+                fmt.Println("\thtml     produce an HTML listing")
                 fmt.Println("\tmd       write markdown to file")
                 os.Exit(1)
         }
