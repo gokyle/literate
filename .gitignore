@@ -1,0 +1,5 @@
+golst
+*.md
+!README.md
+*.html
+*.pdf
