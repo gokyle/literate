@@ -15,7 +15,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
-        "io/ioutil"
+	"io/ioutil"
 	"os"
 	"regexp"
 	"time"
@@ -24,20 +24,21 @@ import (
 const DefaultDateFormat = "2006-01-02 15:04:05 MST"
 
 var (
-	CommentLine = regexp.MustCompile("^\\s*//\\s*")
-	DateFormat  = DefaultDateFormat
-        OutputFormats map[string]OutputWriter
+	CommentLine   = regexp.MustCompile("^\\s*//\\s*")
+	DateFormat    = DefaultDateFormat
+	OutputFormats map[string]OutputWriter
 )
 
-// An output writer takes markdown source and an output file name, and 
+// An output writer takes markdown source and an output file name, and
 // handles its output, whether writing to a file or displaying to screen.
 type OutputWriter func(string, string) error
 
 func init() {
-        OutputFormats = make(map[string]OutputWriter, 0)
-        OutputFormats["-"] = ScreenWriter
-        OutputFormats["html"] = HtmlWriter
-        OutputFormats["md"] = MarkdownWriter
+	OutputFormats = make(map[string]OutputWriter, 0)
+	OutputFormats["-"] = ScreenWriter
+	OutputFormats["html"] = HtmlWriter
+	OutputFormats["md"] = MarkdownWriter
+	OutputFormats["pdf"] = PdfWriter
 }
 
 // SourceToMarkdown takes a file and returns a string containing the
@@ -92,7 +93,7 @@ func SourceToMarkdown(filename string) (markdown string, err error) {
 			// The comment flag is used to trigger a newline
 			// before a codeblock; in some markdown
 			// implementations, not doing this will cause the code
-                        // block to not be displayed properly.
+			// block to not be displayed properly.
 			if comment {
 				markdown += "  \n"
 				comment = false
@@ -108,46 +109,46 @@ func SourceToMarkdown(filename string) (markdown string, err error) {
 func main() {
 	fDateFormat := flag.String("t", DefaultDateFormat,
 		"specify a format for the listing date")
-        fOutputFormat := flag.String("o", "-", "output format")
+	fOutputFormat := flag.String("o", "-", "output format")
 	flag.Parse()
 
 	DateFormat = *fDateFormat
-        outHandler, ok := OutputFormats[*fOutputFormat]
-        if !ok {
-                fmt.Printf("[!] %s is not a supported output format.\n",
-                        *fOutputFormat)
-                fmt.Println("Supported formats:")
-                fmt.Println("\t-        write markdown to standard output")
-                fmt.Println("\thtml     produce an HTML listing")
-                fmt.Println("\tmd       write markdown to file")
-                os.Exit(1)
-        }
+	outHandler, ok := OutputFormats[*fOutputFormat]
+	if !ok {
+		fmt.Printf("[!] %s is not a supported output format.\n",
+			*fOutputFormat)
+		fmt.Println("Supported formats:")
+		fmt.Println("\t-        write markdown to standard output")
+		fmt.Println("\thtml     produce an HTML listing")
+		fmt.Println("\tmd       write markdown to file")
+		os.Exit(1)
+	}
 
-        for _, sourceFile := range flag.Args() {
-                md, err := SourceToMarkdown(sourceFile)
-                if err != nil {
-                        fmt.Fprintf(os.Stderr,
-                                "[!] couldn't convert %s to markdown: %s\n",
-                                sourceFile, err.Error())
-                        continue
-                }
-                if err := outHandler(md, sourceFile); err != nil {
-                        fmt.Fprintf(os.Stderr,
-                                "[!] couldn't convert %s to markdown: %s\n",
-                                sourceFile, err.Error())
-                }
-        }
+	for _, sourceFile := range flag.Args() {
+		md, err := SourceToMarkdown(sourceFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr,
+				"[!] couldn't convert %s to markdown: %s\n",
+				sourceFile, err.Error())
+			continue
+		}
+		if err := outHandler(md, sourceFile); err != nil {
+			fmt.Fprintf(os.Stderr,
+				"[!] couldn't convert %s to markdown: %s\n",
+				sourceFile, err.Error())
+		}
+	}
 
 }
 
 // ScreenWriter prints the markdown to standard output.
 func ScreenWriter(markdown string, filename string) (err error) {
-        _, err = fmt.Println(markdown)
-        return
+	_, err = fmt.Println(markdown)
+	return
 }
 
 // MarkdownWriter writes the markdown listing to a file.
 func MarkdownWriter(markdown string, filename string) (err error) {
-        err = ioutil.WriteFile(filename + ".md", []byte(markdown), 0644)
-        return
+	err = ioutil.WriteFile(filename+".md", []byte(markdown), 0644)
+	return
 }

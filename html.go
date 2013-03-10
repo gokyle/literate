@@ -4,11 +4,11 @@ package main
 // from a Go source file.
 
 import (
-        "bytes"
-        "github.com/russross/blackfriday"
-        "html/template"
-        "io/ioutil"
-        "time"
+	"bytes"
+	"github.com/russross/blackfriday"
+	"html/template"
+	"io/ioutil"
+	"time"
 )
 
 // HtmlTemplate is an template designed to enhance readability.
@@ -117,27 +117,27 @@ a:visited { color: black; }
 // HtmlWriter renders the markdown listing to HTML, writing that to
 // a file.
 func HtmlWriter(markdown, filename string) (err error) {
-        var page struct {
-                Filename string
-                Date     string
-                Markdown template.HTML
-        }
-        rendered := string(blackfriday.MarkdownCommon([]byte(markdown)))
-        page.Markdown = template.HTML(rendered)
-        page.Date = time.Now().Format(DateFormat)
-        page.Filename = filename
+	var page struct {
+		Filename string
+		Date     string
+		Markdown template.HTML
+	}
+	rendered := string(blackfriday.MarkdownCommon([]byte(markdown)))
+	page.Markdown = template.HTML(rendered)
+	page.Date = time.Now().Format(DateFormat)
+	page.Filename = filename
 
-        tmpl, err := template.New(filename).Parse(HtmlTemplate)
-        if err != nil {
-                return
-        }
+	tmpl, err := template.New(filename).Parse(HtmlTemplate)
+	if err != nil {
+		return
+	}
 
-        htmlBuffer := new(bytes.Buffer)
-        err = tmpl.Execute(htmlBuffer, page)
-        if err != nil {
-                return
-        }
+	htmlBuffer := new(bytes.Buffer)
+	err = tmpl.Execute(htmlBuffer, page)
+	if err != nil {
+		return
+	}
 
-        err = ioutil.WriteFile(filename + ".html", htmlBuffer.Bytes(), 0644)
-        return
+	err = ioutil.WriteFile(filename+".html", htmlBuffer.Bytes(), 0644)
+	return
 }
