@@ -38,6 +38,13 @@ example, producing listings for `listing.go`:
 
         golst -o - html.go
 
+* You can produce listings for multiple files at the same time:
+
+        golst -o pdf *.go
+
+  If you ran this on the `golst` directory, you would have `listing.go.pdf`,
+  `html.go.pdf`, and `pandoc.go.pdf`.
+
 ### Dependencies
 
 * `golst` uses [`blackfriday`](https://github.com/russross/blackfriday)
