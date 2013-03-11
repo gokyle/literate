@@ -17,7 +17,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-        "path/filepath"
+	"path/filepath"
 	"regexp"
 	"time"
 )
@@ -25,11 +25,11 @@ import (
 const DefaultDateFormat = "2006-01-02 15:04:05 MST"
 
 var (
-	CommentLine   = regexp.MustCompile("^\\s*//\\s*")
-	DateFormat    = DefaultDateFormat
-        InputFormats  map[string]SourceTransformer
-	OutputFormats map[string]OutputWriter
-        OutputDirectory string
+	CommentLine     = regexp.MustCompile("^\\s*//\\s*")
+	DateFormat      = DefaultDateFormat
+	InputFormats    map[string]SourceTransformer
+	OutputFormats   map[string]OutputWriter
+	OutputDirectory string
 )
 
 // A SourceTransformer converts the source code to desired form. For example,
@@ -42,14 +42,14 @@ type SourceTransformer func(string) (string, error)
 type OutputWriter func(string, string) error
 
 func init() {
-        InputFormats = make(map[string]SourceTransformer, 0)
-        InputFormats["markdown"] = SourceToMarkdown
-        InputFormats["tex"] = SourceToLatex
+	InputFormats = make(map[string]SourceTransformer, 0)
+	InputFormats["markdown"] = SourceToMarkdown
+	InputFormats["tex"] = SourceToLatex
 
 	OutputFormats = make(map[string]OutputWriter, 0)
 	OutputFormats["-"] = ScreenWriter
 	OutputFormats["html"] = HtmlWriter
-        OutputFormats["latex"] = PandocTexWriter
+	OutputFormats["latex"] = PandocTexWriter
 	OutputFormats["md"] = MarkdownWriter
 	OutputFormats["pdf"] = PdfWriter
 	OutputFormats["tex"] = TexWriter
@@ -124,14 +124,14 @@ func main() {
 	fDateFormat := flag.String("t", DefaultDateFormat,
 		"specify a format for the listing date")
 	fOutputFormat := flag.String("o", "-", "output format")
-        fOutputDir := flag.String("d", ".",
-                "directory listings should be saved in.")
+	fOutputDir := flag.String("d", ".",
+		"directory listings should be saved in.")
 	flag.Parse()
 
 	DateFormat = *fDateFormat
-        OutputDirectory = *fOutputDir
+	OutputDirectory = *fOutputDir
 
-        var transformer SourceTransformer
+	var transformer SourceTransformer
 
 	outHandler, ok := OutputFormats[*fOutputFormat]
 	if !ok {
@@ -140,18 +140,18 @@ func main() {
 		fmt.Println("Supported formats:")
 		fmt.Println("\t-        write markdown to standard output")
 		fmt.Println("\thtml     produce an HTML listing")
-                fmt.Println("\tlatex    produce a LaTeX listing")
+		fmt.Println("\tlatex    produce a LaTeX listing")
 		fmt.Println("\tmd       write markdown to file")
-                fmt.Println("\tpdf      produce a PDF listing")
-                fmt.Println("\ttex      produce a TeX listing")
+		fmt.Println("\tpdf      produce a PDF listing")
+		fmt.Println("\ttex      produce a TeX listing")
 		os.Exit(1)
 	}
 
-        if *fOutputFormat != "tex" {
-                transformer = InputFormats["markdown"]
-        } else {
-                transformer = InputFormats["tex"]
-        }
+	if *fOutputFormat != "tex" {
+		transformer = InputFormats["markdown"]
+	} else {
+		transformer = InputFormats["tex"]
+	}
 
 	for _, sourceFile := range flag.Args() {
 		out, err := transformer(sourceFile)
@@ -172,7 +172,7 @@ func main() {
 
 // GetOutFile joins the output directory with the filename.
 func GetOutFile(filename string) string {
-        return filepath.Join(OutputDirectory, filename)
+	return filepath.Join(OutputDirectory, filename)
 }
 
 // ScreenWriter prints the markdown to standard output.
@@ -183,8 +183,7 @@ func ScreenWriter(markdown string, filename string) (err error) {
 
 // MarkdownWriter writes the transformed listing to a file.
 func MarkdownWriter(listing string, filename string) (err error) {
-        outFile := GetOutFile(filename + ".md")
+	outFile := GetOutFile(filename + ".md")
 	err = ioutil.WriteFile(outFile, []byte(listing), 0644)
 	return
 }
-

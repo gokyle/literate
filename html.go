@@ -145,7 +145,7 @@ func HtmlWriter(markdown, filename string) (err error) {
 		return
 	}
 
-        outFile := GetOutFile(filename + ".html")
+	outFile := GetOutFile(filename + ".html")
 	err = ioutil.WriteFile(outFile, htmlBuffer.Bytes(), 0644)
 	return
 }
