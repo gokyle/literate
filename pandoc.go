@@ -24,8 +24,29 @@ func PdfWriter(markdown, filename string) (err error) {
 		return
 	}
 
-	outName := filename + ".pdf"
-	pandoc := exec.Command("pandoc", "-o", outName, tmp.Name())
+	outFile := GetOutFile(filename + ".pdf")
+	pandoc := exec.Command("pandoc", "-o", outFile, tmp.Name())
+	err = pandoc.Run()
+	return
+}
+
+// PandocTexWriter uses pandoc to convert the markdown output to a
+// TeX file.
+func PandocTexWriter(markdown, filename string) (err error) {
+	tmp, err := ioutil.TempFile("", "golst_pandoc")
+	if err != nil {
+		return
+	}
+	defer tmp.Close()
+	defer os.Remove(tmp.Name())
+
+	_, err = tmp.Write([]byte(markdown))
+	if err != nil {
+		return
+	}
+
+	outFile := GetOutFile(filename + ".ltx")
+	pandoc := exec.Command("pandoc", "-s", "-o", outFile, tmp.Name())
 	err = pandoc.Run()
 	return
 }
