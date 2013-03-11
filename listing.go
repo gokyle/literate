@@ -56,7 +56,7 @@ func SourceToMarkdown(filename string) (markdown string, err error) {
 		longLine  bool
 		lineBytes []byte
 		isPrefix  bool
-		comment   bool
+		comment   = true
 	)
 
 	markdown += "## " + filename + "\n"

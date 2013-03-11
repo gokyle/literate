@@ -99,7 +99,14 @@ abbr, acronym { border-bottom: 1px dotted #333; cursor: help; }
 blockquote { border-left: 1px solid #333; font-style: italic; padding: 1em; }
 hr { border-width: 0 0 0.1em 0; border-color: black; }
 
-/* code, pre { font-size: 1.1em } */
+code, pre { 
+        display: block;
+        padding: 5px;
+        font-size: 1.1em;
+        border: solid;
+        border-color: black;
+        border-width: 1px;
+} 
 pre { margin-left: 2em; }
 a:visited { color: black; }
 </style>
