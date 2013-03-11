@@ -45,6 +45,19 @@ example, producing listings for `listing.go`:
   If you ran this on the `golst` directory, you would have `listing.go.pdf`,
   `html.go.pdf`, and `pandoc.go.pdf`.
 
+### Supported Output Formats
+
+Standalone listings are generated; the following formats (selected with
+the `-o` flag) are supported:
+
+* html - generate HTML listing
+* latex - uses [pandoc](http://www.johnmacfarlane.net/pandoc/) to convert the
+  markdown to a LaTeX listing.
+* md - generate markdown listing
+* pdf - uses [pandoc](http://www.johnmacfarlane.net/pandoc/) to convert the
+  markdown to a PDF listing.
+* tex - rudimentary pure-Go TeX listing.
+
 ### Dependencies
 
 * `golst` uses [`blackfriday`](https://github.com/russross/blackfriday)
