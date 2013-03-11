@@ -61,7 +61,7 @@ func SourceToMarkdown(filename string) (markdown string, err error) {
 
 	markdown += "## " + filename + "\n"
 	printDate := time.Now().Format(DateFormat)
-	markdown += "### " + printDate + "\n\n"
+	markdown += "<small>" + printDate + "</small>\n\n"
 
 	for {
 		err = nil
