@@ -5,7 +5,7 @@ listings.  It was inspired by Luke Gorries' post
 ["Readable Programs"](http://blog.lukego.com/blog/2012/10/24/readable-programs/)
 and, in particular, his `pbook` example.
 
-Listings that are written to a file are written as <file.go>.<format>; for
+Listings that are written to a file are written as &lt;file.go>.&lt;format>; for
 example, producing listings for `listing.go`:
 
 * markdown -> `listing.go.md`
@@ -20,7 +20,7 @@ example, producing listings for `listing.go`:
 
   This will produce `listing.go.html`, which is a standalone page. The
   template for this page is contained in the `html.go` source file, and
-  is taken from one of my sites (http://tyrfingr.is).
+  is taken from [my site tyrfingr](http://tyrfingr.is).
 
 * To produce a PDF listing for `pandoc.go`:
 
@@ -68,4 +68,5 @@ by `go get`.
 
 ### License
 
-`golst` is released under an ISC license.
+`golst` is released under an ISC license. For details, see
+[LICENSE](./LICENSE) in the source repository.
