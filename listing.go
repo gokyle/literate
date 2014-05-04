@@ -19,14 +19,21 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 )
 
 const DefaultDateFormat = "2006-01-02 15:04:05 MST"
 
+func buildCommentLine() (err error) {
+	CommentLine, err = regexp.Compile(`^\s*` + LineComments + `\s+`)
+	return
+}
+
 var (
-	CommentLine     = regexp.MustCompile("^\\s*//\\s*")
+	LineComments    = ";;-"
 	DateFormat      = DefaultDateFormat
+	CommentLine     *regexp.Regexp
 	InputFormats    map[string]SourceTransformer
 	OutputFormats   map[string]OutputWriter
 	OutputDirectory string
@@ -120,13 +127,51 @@ func SourceToMarkdown(filename string) (markdown string, err error) {
 	return
 }
 
+var langLineComments = map[string]string{
+	"go":         "//",
+	"lisp":       ";;;",
+	"haskell":    "--",
+	"python":     "#",
+	"ruby":       "#",
+	"javascript": "//",
+}
+
 func main() {
+	flLComments := flag.String("lc", LineComments, "specify how line comments are formed")
+	flLang := flag.String("l", "", "specify a language to process")
 	fDateFormat := flag.String("t", DefaultDateFormat,
 		"specify a format for the listing date")
 	fOutputFormat := flag.String("o", "-", "output format")
 	fOutputDir := flag.String("d", ".",
 		"directory listings should be saved in.")
 	flag.Parse()
+
+	if *flLang != "" {
+		if *flLang == "help" {
+			fmt.Println("Currently supported languages:")
+			for lang := range langLineComments {
+				fmt.Printf("\t%s\n", lang)
+			}
+			os.Exit(0)
+		}
+		lc, ok := langLineComments[strings.ToLower(*flLang)]
+		if !ok {
+			fmt.Println("[!] ", *flLang, " isn't recognised. Currently supported languages:")
+			for lang := range langLineComments {
+				fmt.Printf("\t%s\n", lang)
+			}
+			os.Exit(1)
+		}
+		*flLComments = lc
+	}
+
+	LineComments = *flLComments
+	fmt.Printf("Using line comments '%s'\n", LineComments)
+	err := buildCommentLine()
+	if err != nil {
+		fmt.Printf("[!] Invalid comment line (%v).\n", err)
+		os.Exit(1)
+	}
 
 	DateFormat = *fDateFormat
 	OutputDirectory = *fOutputDir

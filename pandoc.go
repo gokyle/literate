@@ -12,7 +12,7 @@ import (
 // written to a temporary file (which is removed when the function
 // returns); this temporary file is then passed to pandoc for conversion.
 func PdfWriter(markdown, filename string) (err error) {
-	tmp, err := ioutil.TempFile("", "golst_pandoc")
+	tmp, err := ioutil.TempFile("", "literate_pandoc")
 	if err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func PdfWriter(markdown, filename string) (err error) {
 // PandocTexWriter uses pandoc to convert the markdown output to a
 // TeX file.
 func PandocTexWriter(markdown, filename string) (err error) {
-	tmp, err := ioutil.TempFile("", "golst_pandoc")
+	tmp, err := ioutil.TempFile("", "literate_pandoc")
 	if err != nil {
 		return
 	}

@@ -1,9 +1,10 @@
-## golst
+## literate
 
-`golst` is a Go command line tool for generating readable program
+`literate` is a Go command line tool for generating readable program
 listings.  It was inspired by Luke Gorries' post 
 ["Readable Programs"](http://blog.lukego.com/blog/2012/10/24/readable-programs/)
-and, in particular, his `pbook` example.
+and, in particular, his `pbook` example. It works by treating all text that have
+a line comment as Markdown text, and putting code in code blocks.
 
 Listings that are written to a file are written as &lt;file.go>.&lt;format>; for
 example, producing listings for `listing.go`:
@@ -12,11 +13,16 @@ example, producing listings for `listing.go`:
 * HTML -> `listing.go.html`
 * PDF -> `listing.go.pdf`
 
+Multiple languages are supported; for the list, pass the `-l help`
+flag to `literate`. `literate` is a simple tool that only recognises line
+comments right now; you can tell it what a line comment starts with and
+it will use that.
+
 ### Examples
 
 * To produce an HTML listing for `listing.go`:
 
-        golst -o html listing.go
+        literate -o html listing.go
 
   This will produce `listing.go.html`, which is a standalone page. The
   template for this page is contained in the `html.go` source file, and
@@ -24,7 +30,7 @@ example, producing listings for `listing.go`:
 
 * To produce a PDF listing for `pandoc.go`:
 
-        golst -o pdf pandoc.go
+        literate -o pdf pandoc.go
 
   Similar to the previous example, this will produce the PDF file
   `pandoc.go.pdf`.
@@ -32,18 +38,18 @@ example, producing listings for `listing.go`:
 * To produce a markdown listing for `html.go` and have this printed
   to standard output:
 
-        golst html.go
+        literate html.go
 
   Or, alternatively,
 
-        golst -o - html.go
+        literate -o - html.go
 
 * You can produce listings for multiple files at the same time:
 
-        golst -o pdf *.go
+        literate -o pdf *.go
 
-  If you ran this on the `golst` directory, you would have `listing.go.pdf`,
-  `html.go.pdf`, and `pandoc.go.pdf`.
+  If you ran this on the `literate` directory, you would have `listing.go.pdf`,
+  `html.go.pdf`, `pandoc.go.pdf`, and `texout.go.pdf`.
 
 ### Supported Output Formats
 
@@ -60,13 +66,20 @@ the `-o` flag) are supported:
 
 ### Dependencies
 
-* `golst` uses [`blackfriday`](https://github.com/russross/blackfriday)
+* `literate` uses [`blackfriday`](https://github.com/russross/blackfriday)
 for producing HTML from the listing. This will automatically be pulled in
 by `go get`.
 
 * `pandoc` is required for conversion to PDF.
 
+### Why?
+
+Ultimately, I wanted a way to take notes while reading a book and have
+a way to extract better-looking notes from a source file while still
+retaining the ability to run the files. This program does (pretty much)
+just what I want it to, although block comments would be nice.
+
 ### License
 
-`golst` is released under an ISC license. For details, see
+`literate` is released under an ISC license. For details, see
 [LICENSE](./LICENSE) in the source repository.
