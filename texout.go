@@ -15,8 +15,23 @@ func SourceToLatex(filename string) (tex string, err error) {
 \usepackage{parskip}
 \setlength{\parindent}{11pt}
 \setlength{\parindent}{0cm}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{fancyvrb}
+\usepackage{iwona,palatino}
+\usepackage[OT1]{fontenc}
+\usepackage{textcomp}
+\usepackage{lmodern}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xltxtra}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{framed}
+
 
 \title{%s}
+\author{literate listing}
 
 \begin{document}
 \maketitle
@@ -61,21 +76,21 @@ func SourceToLatex(filename string) (tex string, err error) {
 
 		if CommentLine.MatchString(line) {
 			if !comment {
-				tex += "\\end{verbatim}\n\n"
+				tex += "\\end{lstlisting}\n\n"
 			}
 			tex += CommentLine.ReplaceAllString(line, "")
 			tex += "\n"
 			comment = true
 		} else {
 			if comment {
-				tex += "\n\n\\begin{verbatim}\n"
+				tex += "\n\n\\begin{lstlisting}[frame=single]\n"
 				comment = false
 			}
 			tex += line + "\n"
 		}
 	}
 	if !comment {
-		tex += "\\end{verbatim}\n\n"
+		tex += "\\end{lstlisting}\n\n"
 	}
 	tex += "\\end{document}\n"
 	return

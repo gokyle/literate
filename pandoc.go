@@ -24,8 +24,27 @@ func PdfWriter(markdown, filename string) (err error) {
 		return
 	}
 
+	_, err = tmp.Write([]byte(markdown))
+	if err != nil {
+		return
+	}
+
+	tmptpl, err := ioutil.TempFile("", "literate_pandoc")
+	if err != nil {
+		return
+	}
+	tempName := tmptpl.Name() + ".latex"
+	tmptpl.Close()
+	os.Remove(tmptpl.Name())
+	defer os.Remove(tempName)
+
+	err = ioutil.WriteFile(tempName, []byte(ltxTemplate), 0644)
+	if err != nil {
+		return
+	}
+
 	outFile := GetOutFile(filename + ".pdf")
-	pandoc := exec.Command("pandoc", "-o", outFile, tmp.Name())
+	pandoc := exec.Command("pandoc", "-o", outFile, "--listings", "--template", tmptpl.Name(), tmp.Name())
 	err = pandoc.Run()
 	return
 }
