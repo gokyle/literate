@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Literate by gokyle</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Literate</h1>
+        <p>A literate programming tool.</p>
+
+        <p class="view"><a href="https://github.com/gokyle/literate">View the Project on GitHub <small>gokyle/literate</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/gokyle/literate/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/gokyle/literate/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/gokyle/literate">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a name="literate" class="anchor" href="#literate"><span class="octicon octicon-link"></span></a>literate</h2>
+
+<p><code>literate</code> is a Go command line tool for generating readable program
+listings.  It was inspired by Luke Gorries' post 
+<a href="http://blog.lukego.com/blog/2012/10/24/readable-programs/">"Readable Programs"</a>
+and, in particular, his <code>pbook</code> example. It works by treating all text that have
+a line comment as Markdown text, and putting code in code blocks.</p>
+
+<p>Listings that are written to a file are written as &lt;file.go&gt;.&lt;format&gt;; for
+example, producing listings for <code>listing.go</code>:</p>
+
+<ul>
+<li>markdown -&gt; <code>listing.go.md</code>
+</li>
+<li>HTML -&gt; <code>listing.go.html</code>
+</li>
+<li>PDF -&gt; <code>listing.go.pdf</code>
+</li>
+</ul><p>Multiple languages are supported; for the list, pass the <code>-l help</code>
+flag to <code>literate</code>. <code>literate</code> is a simple tool that only recognises line
+comments right now; you can tell it what a line comment starts with and
+it will use that.</p>
+
+<h3>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h3>
+
+<ul>
+<li>
+<p>To produce an HTML listing for <code>listing.go</code>:</p>
+
+<pre><code>literate -o html listing.go
+</code></pre>
+
+<p>This will produce <code>listing.go.html</code>, which is a standalone page. The
+template for this page is contained in the <code>html.go</code> source file, and
+is taken from <a href="http://tyrfingr.is">my site tyrfingr</a>.</p>
+</li>
+<li>
+<p>To produce a PDF listing for <code>pandoc.go</code>:</p>
+
+<pre><code>literate -o pdf pandoc.go
+</code></pre>
+
+<p>Similar to the previous example, this will produce the PDF file
+<code>pandoc.go.pdf</code>.</p>
+</li>
+<li>
+<p>To produce a markdown listing for <code>html.go</code> and have this printed
+to standard output:</p>
+
+<pre><code>  literate html.go
+</code></pre>
+
+<p>Or, alternatively,</p>
+
+<pre><code>  literate -o - html.go
+</code></pre>
+</li>
+<li>
+<p>You can produce listings for multiple files at the same time:</p>
+
+<pre><code>literate -o pdf *.go
+</code></pre>
+
+<p>If you ran this on the <code>literate</code> directory, you would have <code>listing.go.pdf</code>,
+<code>html.go.pdf</code>, <code>pandoc.go.pdf</code>, and <code>texout.go.pdf</code>.</p>
+</li>
+</ul><h3>
+<a name="supported-output-formats" class="anchor" href="#supported-output-formats"><span class="octicon octicon-link"></span></a>Supported Output Formats</h3>
+
+<p>Standalone listings are generated; the following formats (selected with
+the <code>-o</code> flag) are supported:</p>
+
+<ul>
+<li>html - generate HTML listing</li>
+<li>latex - uses <a href="http://www.johnmacfarlane.net/pandoc/">pandoc</a> to convert the
+markdown to a LaTeX listing.</li>
+<li>md - generate markdown listing</li>
+<li>pdf - uses <a href="http://www.johnmacfarlane.net/pandoc/">pandoc</a> to convert the
+markdown to a PDF listing.</li>
+<li>tex - rudimentary pure-Go TeX listing.</li>
+</ul><h3>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h3>
+
+<ul>
+<li><p><code>literate</code> uses <a href="https://github.com/russross/blackfriday"><code>blackfriday</code></a>
+for producing HTML from the listing. This will automatically be pulled in
+by <code>go get</code>.</p></li>
+<li><p><code>pandoc</code> is required for conversion to PDF.</p></li>
+</ul><h3>
+<a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why?</h3>
+
+<p>Ultimately, I wanted a way to take notes while reading a book and have
+a way to extract better-looking notes from a source file while still
+retaining the ability to run the files. This program does (pretty much)
+just what I want it to, although block comments would be nice. Originally,
+I had <a href="https://github.com/gokyle/golst">golst</a>, but wanted to be able
+to use it with Lisp and Haskell.</p>
+
+<h3>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
+
+<p><code>literate</code> is released under an ISC license. For details, see
+<a href="./LICENSE">LICENSE</a> in the source repository.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/gokyle">gokyle</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
