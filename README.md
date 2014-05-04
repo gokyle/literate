@@ -77,7 +77,9 @@ by `go get`.
 Ultimately, I wanted a way to take notes while reading a book and have
 a way to extract better-looking notes from a source file while still
 retaining the ability to run the files. This program does (pretty much)
-just what I want it to, although block comments would be nice.
+just what I want it to, although block comments would be nice. Originally,
+I had [golst](https://github.com/gokyle/golst), but wanted to be able
+to use it with Lisp and Haskell.
 
 ### License
 

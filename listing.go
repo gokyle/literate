@@ -26,7 +26,7 @@ import (
 const DefaultDateFormat = "2006-01-02 15:04:05 MST"
 
 func buildCommentLine() (err error) {
-	CommentLine, err = regexp.Compile(`^\s*` + LineComments + `\s+`)
+	CommentLine, err = regexp.Compile(`^\s*` + LineComments + `\s*`)
 	return
 }
 
@@ -166,7 +166,6 @@ func main() {
 	}
 
 	LineComments = *flLComments
-	fmt.Printf("Using line comments '%s'\n", LineComments)
 	err := buildCommentLine()
 	if err != nil {
 		fmt.Printf("[!] Invalid comment line (%v).\n", err)
