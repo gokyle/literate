@@ -24,11 +24,6 @@ func PdfWriter(markdown, filename string) (err error) {
 		return
 	}
 
-	_, err = tmp.Write([]byte(markdown))
-	if err != nil {
-		return
-	}
-
 	tmptpl, err := ioutil.TempFile("", "literate_pandoc")
 	if err != nil {
 		return
