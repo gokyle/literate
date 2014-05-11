@@ -134,6 +134,7 @@ var langLineComments = map[string]string{
 	"python":     "#",
 	"ruby":       "#",
 	"javascript": "//",
+	"erlang":     "%%",
 }
 
 func main() {
