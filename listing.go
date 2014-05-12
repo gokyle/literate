@@ -31,11 +31,21 @@ func buildCommentLine() (err error) {
 }
 
 var (
-	LineComments    = ";;-"
-	DateFormat      = DefaultDateFormat
-	CommentLine     *regexp.Regexp
-	InputFormats    map[string]SourceTransformer
-	OutputFormats   map[string]OutputWriter
+	LineComments = ";;-"
+	DateFormat   = DefaultDateFormat
+	CommentLine  *regexp.Regexp
+	InputFormats = map[string]SourceTransformer{
+		"markdown": SourceToMarkdown,
+		"tex":      SourceToLatex,
+	}
+	OutputFormats = map[string]OutputWriter{
+		"-":     ScreenWriter,
+		"html":  HtmlWriter,
+		"latex": PandocTexWriter,
+		"md":    MarkdownWriter,
+		"pdf":   PdfWriter,
+		"tex":   TexWriter,
+	}
 	OutputDirectory string
 )
 
@@ -48,23 +58,9 @@ type SourceTransformer func(string) (string, error)
 // handles its output, whether writing to a file or displaying to screen.
 type OutputWriter func(string, string) error
 
-func init() {
-	InputFormats = make(map[string]SourceTransformer, 0)
-	InputFormats["markdown"] = SourceToMarkdown
-	InputFormats["tex"] = SourceToLatex
-
-	OutputFormats = make(map[string]OutputWriter, 0)
-	OutputFormats["-"] = ScreenWriter
-	OutputFormats["html"] = HtmlWriter
-	OutputFormats["latex"] = PandocTexWriter
-	OutputFormats["md"] = MarkdownWriter
-	OutputFormats["pdf"] = PdfWriter
-	OutputFormats["tex"] = TexWriter
-}
-
-// SourceToMarkdown takes a file and returns a string containing the
+// sourceToMarkdown takes a file and returns a string containing the
 // source converted to markdown.
-func SourceToMarkdown(filename string) (markdown string, err error) {
+func sourceToMarkdown(filename string, isPandoc bool) (markdown string, err error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return
@@ -80,7 +76,10 @@ func SourceToMarkdown(filename string) (markdown string, err error) {
 		comment   = true
 	)
 
-	markdown += "## " + filename + "\n"
+	if isPandoc {
+		filename += " {-}"
+	}
+	markdown += "# " + filename + "\n"
 	printDate := time.Now().Format(DateFormat)
 	markdown += "<small>" + printDate + "</small>\n\n"
 
@@ -125,6 +124,14 @@ func SourceToMarkdown(filename string) (markdown string, err error) {
 		markdown += "\n"
 	}
 	return
+}
+
+func SourceToMarkdown(filename string) (markdown string, err error) {
+	return sourceToMarkdown(filename, false)
+}
+
+func PandocSourceToMarkdown(filename string) (markdown string, err error) {
+	return sourceToMarkdown(filename, true)
 }
 
 var langLineComments = map[string]string{
@@ -191,21 +198,30 @@ func main() {
 		fmt.Println("\ttex      produce a TeX listing")
 		os.Exit(1)
 	}
+	if *flUnified != "" && *fOutputFormat == "pdf" {
+		outHandler = UnifiedPdfWriter
+	}
 
-	if *fOutputFormat != "tex" {
+	if *fOutputFormat == "pdf" {
+		transformer = PandocSourceToMarkdown
+	} else if *fOutputFormat != "tex" {
 		transformer = InputFormats["markdown"]
 	} else {
 		transformer = InputFormats["tex"]
 	}
 
 	var combined string
-	if *flReadme != "" {
+	if *flUnified != "" && *flReadme != "" {
 		out, err := ioutil.ReadFile(*flReadme)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[!] %v\n", err)
 			os.Exit(1)
 		}
-		combined = string(out)
+		combined = "# README.md"
+		if *fOutputFormat == "pdf" {
+			combined += " {-}"
+		}
+		combined += "\n" + string(out)
 	}
 
 	for _, sourceFile := range flag.Args() {

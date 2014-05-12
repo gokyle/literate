@@ -9,10 +9,10 @@ import (
 	"os/exec"
 )
 
-// PdfWriter transforms the listing to a PDF. First, the markdown is
+// pdfWriter transforms the listing to a PDF. First, the markdown is
 // written to a temporary file (which is removed when the function
 // returns); this temporary file is then passed to pandoc for conversion.
-func PdfWriter(markdown, filename string) (err error) {
+func pdfWriter(markdown, filename string, args []string) (err error) {
 	tmp, err := ioutil.TempFile("", "literate_pandoc")
 	if err != nil {
 		return
@@ -40,12 +40,34 @@ func PdfWriter(markdown, filename string) (err error) {
 	}
 
 	outFile := GetOutFile(filename + ".pdf")
-	pandoc := exec.Command("pandoc", "-o", outFile, "--listings", "--template", tmptpl.Name(), tmp.Name())
+	args = append(args, "-o")
+	args = append(args, outFile)
+	args = append(args, "--listing")
+	args = append(args, "--template")
+	args = append(args, tmptpl.Name())
+	args = append(args, tmp.Name())
+	pandoc := exec.Command("pandoc", args...)
 	pandocOut, err := pandoc.CombinedOutput()
 	if err != nil {
 		fmt.Printf("[!] pandoc: '%s'\n", string(pandocOut))
 	}
 	return
+}
+
+// PdfWriter transforms the listing to a PDF. First, the markdown is
+// written to a temporary file (which is removed when the function
+// returns); this temporary file is then passed to pandoc for
+// conversion. It is a wrapper around pdfWriter for non-unified
+// output.
+func PdfWriter(markdown, filename string) (err error) {
+	return pdfWriter(markdown, filename, nil)
+}
+
+// PdfWriter transforms the listing to a PDF. First, the markdown is
+// written to a temporary file (which is removed when the function
+// returns); this temporary file is then passed to pandoc for conversion.
+func UnifiedPdfWriter(markdown, filename string) (err error) {
+	return pdfWriter(markdown, filename, []string{"-V", "documentclass=book", "--toc"})
 }
 
 // PandocTexWriter uses pandoc to convert the markdown output to a
