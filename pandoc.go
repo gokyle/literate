@@ -3,6 +3,7 @@ package main
 // pandoc.go adds pandoc support for converting listings to PDF format.
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -40,7 +41,10 @@ func PdfWriter(markdown, filename string) (err error) {
 
 	outFile := GetOutFile(filename + ".pdf")
 	pandoc := exec.Command("pandoc", "-o", outFile, "--listings", "--template", tmptpl.Name(), tmp.Name())
-	err = pandoc.Run()
+	pandocOut, err := pandoc.CombinedOutput()
+	if err != nil {
+		fmt.Printf("[!] pandoc: '%s'\n", string(pandocOut))
+	}
 	return
 }
 
