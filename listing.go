@@ -138,13 +138,12 @@ var langLineComments = map[string]string{
 }
 
 func main() {
+	flUnified := flag.String("u", "", "unify files into one output named by the argument")
 	flLComments := flag.String("lc", LineComments, "specify how line comments are formed")
 	flLang := flag.String("l", "", "specify a language to process")
-	fDateFormat := flag.String("t", DefaultDateFormat,
-		"specify a format for the listing date")
+	fDateFormat := flag.String("t", DefaultDateFormat, "specify a format for the listing date")
 	fOutputFormat := flag.String("o", "-", "output format")
-	fOutputDir := flag.String("d", ".",
-		"directory listings should be saved in.")
+	fOutputDir := flag.String("d", ".", "directory listings should be saved in.")
 	flag.Parse()
 
 	if *flLang != "" {
@@ -198,6 +197,7 @@ func main() {
 		transformer = InputFormats["tex"]
 	}
 
+	var combined string
 	for _, sourceFile := range flag.Args() {
 		out, err := transformer(sourceFile)
 		if err != nil {
@@ -206,10 +206,22 @@ func main() {
 				sourceFile, err.Error())
 			continue
 		}
-		if err := outHandler(out, sourceFile); err != nil {
-			fmt.Fprintf(os.Stderr,
-				"[!] couldn't convert %s to listing: %s\n",
-				sourceFile, err.Error())
+
+		if *flUnified != "" {
+			combined += "\n" + out
+		} else {
+			if err := outHandler(out, sourceFile); err != nil {
+				fmt.Fprintf(os.Stderr,
+					"[!] couldn't convert %s to listing: %s\n",
+					sourceFile, err.Error())
+			}
+		}
+	}
+
+	if *flUnified != "" {
+		if err := outHandler(combined, *flUnified); err != nil {
+			fmt.Fprintf(os.Stderr, "[!] couldn't create listing %s: %s\n",
+				*flUnified, err.Error())
 		}
 	}
 
