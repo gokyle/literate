@@ -139,6 +139,7 @@ var langLineComments = map[string]string{
 
 func main() {
 	flUnified := flag.String("u", "", "unify files into one output named by the argument")
+	flReadme := flag.String("readme", "README.md", "use the argument as an introductory README in a unified output")
 	flLComments := flag.String("lc", LineComments, "specify how line comments are formed")
 	flLang := flag.String("l", "", "specify a language to process")
 	fDateFormat := flag.String("t", DefaultDateFormat, "specify a format for the listing date")
@@ -198,12 +199,20 @@ func main() {
 	}
 
 	var combined string
+	if *flReadme != "" {
+		out, err := ioutil.ReadFile(*flReadme)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[!] %v\n", err)
+			os.Exit(1)
+		}
+		combined = string(out)
+	}
+
 	for _, sourceFile := range flag.Args() {
 		out, err := transformer(sourceFile)
 		if err != nil {
-			fmt.Fprintf(os.Stderr,
-				"[!] couldn't convert %s to listing: %s\n",
-				sourceFile, err.Error())
+			fmt.Fprintf(os.Stderr, "[!] couldn't convert %s to listing: %v\n",
+				sourceFile, err)
 			continue
 		}
 
@@ -211,17 +220,16 @@ func main() {
 			combined += "\n" + out
 		} else {
 			if err := outHandler(out, sourceFile); err != nil {
-				fmt.Fprintf(os.Stderr,
-					"[!] couldn't convert %s to listing: %s\n",
-					sourceFile, err.Error())
+				fmt.Fprintf(os.Stderr, "[!] couldn't convert %s to listing: %v\n",
+					sourceFile, err)
 			}
 		}
 	}
 
 	if *flUnified != "" {
 		if err := outHandler(combined, *flUnified); err != nil {
-			fmt.Fprintf(os.Stderr, "[!] couldn't create listing %s: %s\n",
-				*flUnified, err.Error())
+			fmt.Fprintf(os.Stderr, "[!] couldn't create listing %s: %v\n",
+				*flUnified, err)
 		}
 	}
 
