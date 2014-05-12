@@ -54,6 +54,8 @@ $endif$
 $if(listings)$
 \usepackage{listings}
 \lstset{frame=single}
+\lstset{basicstyle=\footnotesize}
+\lstset{breaklines=true}
 $endif$
 $if(lhs)$
 \lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
