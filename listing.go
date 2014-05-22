@@ -31,7 +31,7 @@ func buildCommentLine() (err error) {
 }
 
 var (
-	LineComments = ";;-"
+	LineComments = `^\s*;;+`
 	DateFormat   = DefaultDateFormat
 	CommentLine  *regexp.Regexp
 	InputFormats = map[string]SourceTransformer{
